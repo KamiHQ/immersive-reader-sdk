@@ -1,0 +1,14 @@
+﻿/* Copyright (c) Microsoft Corporation. All rights reserved.
+ Licensed under the MIT License. */
+
+.ir-button-area {
+    margin: 0 auto;
+    position: relative;
+    width: 100%;
+}
+
+.ir-button-small {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+}

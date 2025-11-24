@@ -1,0 +1,110 @@
+<!-- Copyright (c) Microsoft Corporation. All rights reserved.
+     Licensed under the MIT License. -->
+
+<!doctype html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>Immersive Reader Example: Document</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+
+    <!-- Use the local library built through 'yarn build:dev'. In production, use the library available on the cdn. -->
+    <script type='text/javascript' src='https://ircdname.azureedge.net/immersivereadersdk/immersive-reader-sdk.1.4.0.js'></script>
+    
+    <!-- A polyfill for Promise is needed for IE11 support -->
+    <script type='text/javascript' src='https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js'></script>
+    <script type='text/javascript' src='../js/helpers.js'></script>
+
+    <link href='../css/styles.css' rel='stylesheet'>
+    <link href='../css/buttons.css' rel='stylesheet'>
+
+    <style type='text/css'>
+
+        #ContentArea {
+            margin: 0 auto;
+            position: relative;
+            width: 100%;
+        }
+
+        #IRContent {
+            margin: 0 100px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        Examples:
+        <a href='/sections'>Sections</a>
+        <a href='/document'>Document</a>
+        <a href='/multilang' class='active'>Multilingual Document</a>
+        <a href='/uilangs'>UI Language</a>
+        <a href='/math'>Math</a>
+        <a href='/hideexitbutton'>Hide Exit Button</a>
+        <a href='/options'>Options</a>
+    </nav>
+
+    <header class='ir-button-area'>
+        <button class='ir-button ir-button-wide' role='button' title='Immersive Reader' aria-label='Immersive Reader' onclick='handleLaunchImmersiveReader()'>
+            <img class='ir-button-icon' src='../images/icon.svg' />
+            <span class='ir-button-text' aria-hidden='true'>Immersive Reader</span>
+        </button>
+    </header>
+    <main id='ContentArea'>
+        <article id='IRContent'>
+            <h1 id='IrTitle'>Multilingual Document</h1>
+            <p id='IrText0' ir-lang='en-en'>
+                Learning Tools Immersive Reader creates a reading experience that adds accessibility and comprehension for learners of all ages and abilities.
+            </p>
+            <p id='IrText1' ir-lang='en-en'>
+                The Immersive Reader is available in many languages.
+            </p>
+            <p id='IrText2' ir-lang='es-es'>
+                El Lector inmersivo está disponible en varios idiomas.
+            </p>
+            <p id='IrText3' ir-lang='fr-fr'>
+                Le lecteur immersif est disponible dans de nombreuses langues.
+            </p>
+            <p id='IrText4' ir-lang='de-DE'>
+                Der plastische Reader ist in vielen Sprachen verfügbar.
+            </p>
+        </article>
+    </main>
+
+    <script type='text/javascript'>
+        function handleLaunchImmersiveReader() {
+            var title = $('#IrTitle').text().trim();
+
+            var chunks = [];
+            for (var i = 0; i < 5; i++) {
+                var chunkP = $('#IrText' + i);
+                var langChunkText = chunkP.text().trim();
+                var chunkLang = chunkP.attr('ir-lang');
+
+                chunks.push({
+                    content: langChunkText,
+                    lang: chunkLang
+                });
+
+                // Add a chunk of text to make a new line between chunks
+                chunks.push({
+                    content: '\n',
+                    lang: 'en'
+                });
+            }
+
+            const data = {
+                title: title,
+                chunks: chunks
+            };
+
+            // Refer to the launchImmersiveReader() function in helpers.js for more information. It covers how to retrieve
+            // the Cognitive Services token, the subdomain, and usage of the launchAsync function of the Immersive Reader SDK
+            launchImmersiveReader(data);
+        }
+    </script>
+</body>
+</html>

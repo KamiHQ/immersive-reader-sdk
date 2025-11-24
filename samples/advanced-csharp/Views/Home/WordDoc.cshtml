@@ -1,0 +1,109 @@
+﻿<!-- Copyright (c) Microsoft Corporation. All rights reserved.
+     Licensed under the MIT License. -->
+﻿@{
+    var token = ViewData["Token"] as string;
+    var subdomain = ViewData["Subdomain"] as string;
+}
+
+<!doctype html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>Immersive Reader Example: Loading a Word Document</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+    <script type='text/javascript' src='https://ircdname.azureedge.net/immersivereadersdk/immersive-reader-sdk.1.4.0.js'></script>
+    <script type='text/javascript' src='~/js/helpers.js'></script>
+
+    <link href='~/css/styles.css' rel='stylesheet'>
+    <link href='~/css/buttons.css' rel='stylesheet'>
+
+    <script type='text/javascript'>
+        var Canary = '@Html.Raw(ViewData["Canary"])';
+    </script>
+
+    <style type='text/css'>
+        #ContentArea {
+            margin: 0 auto;
+            position: relative;
+            width: 100%;
+        }
+
+        #IRContent {
+            margin: 0 100px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        Examples:
+        <a href='@Url.Action("Index", "Home")' class='active'>Sections</a>
+        <a href='@Url.Action("Document", "Home")'>Document</a>
+        <a href='@Url.Action("MultiLang", "Home")'>Multilingual Document</a>
+        <a href='@Url.Action("UILangs", "Home")'>UI Language</a>
+        <a href='@Url.Action("Math", "Home")'>Math</a>
+        <a href='@Url.Action("WordDoc", "Home")'>Word Document</a>
+        <a href='@Url.Action("Options", "Home")'>Options</a>
+    </nav>
+
+    <main id='ContentArea'>
+        <label for="post-docxFile">Launch a Word Doc in Immersive Reader:</label>
+        <div>
+            <input class="btn" type="file" id="post-docxFile" name="file" onchange="launchUploadedDocx(this)" />
+        </div>
+    </main>
+
+    <script type='text/javascript'>
+        function launchUploadedDocx(input) {
+            var reader = new FileReader();
+
+            reader.onloadend = function (evt) {
+                // This method is triggered after the reader.readAsBinaryString() completes.
+                var base64EncodedFile = window.btoa(reader.result);
+
+                const data = {
+                    title: input.value.toString(),
+                    chunks: [{
+                        content: base64EncodedFile,
+                        lang: 'en',
+                        mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' // Word Docx mimetype
+                    }]
+                };
+
+                launchImmersiveReader(data);
+            }
+
+            if (!input.value.toString().endsWith(".docx")) {
+                alert("You must choose a .docx file");
+            } else {
+                reader.readAsBinaryString(input.files[0]);
+            }
+        }
+
+        async function launchImmersiveReader(data) {
+            let token = "@token";
+            const subdomain = "@subdomain";
+
+            // Learn more about options https://docs.microsoft.com/azure/cognitive-services/immersive-reader/reference#options
+            const options = {
+                onExit: exitCallback
+            };
+
+            await ImmersiveReader.launchAsync(token, subdomain, data, options)
+                .then(() => {
+                    console.log('Successful launch.');
+                })
+                .catch ((e) => {
+                    alert('Error in launching the Immersive Reader. Check the console.');
+                    console.log(e);
+                });
+        }
+
+        function exitCallback() {
+            console.log('This is the callback function. It is executed when the Immersive Reader closes.');
+        }
+    </script>
+</body>
+</html>

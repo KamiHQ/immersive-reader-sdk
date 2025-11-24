@@ -1,32 +1,76 @@
 # Azure Applied AI Immersive Reader - Immersive Reader SDK
 
-The Immersive Reader SDK is a set of libraries that allow you to easily and quickly integrate the [Immersive Reader](https://azure.microsoft.com/services/immersive-reader) into your application.
+The Immersive Reader JavaScript SDK is a JavaScript library that allows you to easily and quickly integrate the [Immersive Reader](https://azure.microsoft.com/services/immersive-reader) into your web application.
 
 ## Usage
 
-* [JavaScript](./js)
-* [Usage](https://docs.microsoft.com/azure/cognitive-services/immersive-reader/reference)
+Usage of this SDK requires an Azure subscription to Immersive Reader. Follow [these instructions](https://docs.microsoft.com/azure/applied-ai-services/immersive-reader/how-to-create-immersive-reader) to create an Immersive Reader resource and configure Azure Active Directory authentication. Save the output of your session into a text file for future reference.
 
-## Contributing
+You can find examples of how to acquire an authentication token in the [samples](./samples).
 
-We welcome [contributions](CONTRIBUTING.md) to this project.
+Include the library of the stable build in your web application:
 
-* [Submit bugs](https://github.com/microsoft/immersive-reader-sdk/issues) and help us verify fixes as they are checked in.
-* Submit and review [source code changes](https://github.com/microsoft/immersive-reader-sdk/pulls).
-* Join the discussion on [StackOverflow](https://stackoverflow.com/questions/tagged/immersive-reader) and [Twitter](https://twitter.com/hashtag/ImmersiveReader).
+```html
+<script type='text/javascript' src='https://ircdname.azureedge.net/immersivereadersdk/immersive-reader-sdk.1.4.0.js'></script>
+```
 
-Please submit pull requests to the [dev](https://github.com/microsoft/immersive-reader-sdk/tree/dev) branch.
+```bash
+npm install @microsoft/immersive-reader-sdk
+```
 
-## Reporting Security Issues
+```bash
+yarn add @microsoft/immersive-reader-sdk
+```
 
-Security issues and bugs should be reported privately, via email, to the Microsoft Security Response Center (MSRC) at
-[secure@microsoft.com](mailto:secure@microsoft.com). You should receive a response within 24 hours. If for some reason
-you do not, please follow up via email to ensure we received your original message. Further information, including the
-[MSRC PGP](https://technet.microsoft.com/security/dn606155) key, can be found in the
-[Security TechCenter](https://technet.microsoft.com/security/default).
+Add an HTML element to your webpage with the `immersive-reader-button` class attribute.
 
-## License
+```html
+<div class='immersive-reader-button' onclick='launchImmersiveReader()'></div>
+```
 
-Copyright (c) Microsoft Corporation. All rights reserved.
+Next, invoke the Immersive Reader when the button is clicked:
 
-Licensed under the [MIT](LICENSE.txt) License.
+```javascript
+function launchImmersiveReader() {
+    const content = {
+        title: 'Immersive Reader',
+        chunks: [ {
+            content: 'Hello, world!'
+        } ]
+    };
+    ImmersiveReader.launchAsync(YOUR_TOKEN, YOUR_SUBDOMAIN, content);
+}
+```
+
+Take a look at the [samples](./samples) for examples of a full end-to-end integration.
+
+The Immersive Reader may use persistent cookies to maintain user preferences and track feature usage. When embedding the Immersive Reader into applications, please consider the requirements of EU Cookie Compliance Policy. Setting the [cookiePolicy option](./src/options.ts) to **CookiePolicy.Enable** will enable the Immersive Reader to use cookies. It is the responsibility of the host application to obtain any necessary user consent in accordance with EU Cookie Compliance Policy.
+
+## Building
+
+In order to build the SDK, ensure that you have [Git](https://git-scm.com/downloads), [Node.js](https://nodejs.org/), and [Yarn](https://yarnpkg.com/) installed.
+
+Clone a copy of the repo:
+
+```bash
+git clone https://github.com/microsoft/immersive-reader-sdk
+```
+
+Change to the immersive-reader-sdk directory:
+
+```bash
+cd immersive-reader-sdk
+```
+
+Install dependencies:
+
+```bash
+yarn
+```
+
+Build and test:
+
+```bash
+yarn run build
+yarn run test
+```
